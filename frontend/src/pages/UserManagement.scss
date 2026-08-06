@@ -1,0 +1,148 @@
+@import '../styles/variables';
+
+.um-page {
+  min-height: 100vh;
+  padding: 48px 32px;
+  background: $color-bg;
+}
+
+.um-container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.um-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.btn-back {
+  font-family: $font-heading;
+  font-size: 13px;
+  font-weight: 500;
+  background: $color-text-dark;
+  color: $color-bg;
+  border: 1px solid $color-divider-solid;
+  border-radius: 4px;
+  padding: 8px 14px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.um-error {
+  color: $color-accent-red;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.um-search-box {
+  margin-bottom: 24px;
+}
+
+.um-search-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: $font-body;
+  font-size: 14px;
+  border: 1px solid $color-divider-solid;
+  border-radius: 4px;
+  background: $color-bg;
+  color: $color-text-primary;
+
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-text-dark;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.um-table-wrapper {
+  border: 1px solid $color-divider-solid;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.um-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: $font-body;
+  font-size: 14px;
+
+  thead {
+    background: $color-accent-gray-pale;
+
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-family: $font-heading;
+      font-size: 12px;
+      font-weight: 600;
+      color: $color-text-secondary;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      border-bottom: 1px solid $color-divider-solid;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $color-divider-solid;
+      transition: background 0.15s;
+
+      &:last-child { border-bottom: none; }
+      &:hover { background: $color-accent-gray-pale; }
+    }
+
+    td {
+      padding: 12px 16px;
+      color: $color-text-primary;
+    }
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: $font-heading;
+
+  &-admin    { background: $color-accent-blue-pale;  color: $color-accent-blue-dark; }
+  &-tourist  { background: $color-accent-gray-light; color: $color-text-secondary;   }
+  &-guide    { background: $color-accent-blue-light; color: $color-accent-blue-dark; }
+  &-active   { background: #E6F9F0;                  color: #1A7A4A;                 }
+  &-blocked  { background: #FDE8E8;                  color: $color-accent-red;       }
+}
+
+.btn-block {
+  font-family: $font-heading;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  background: #FDE8E8;
+  color: $color-accent-red;
+
+  &:hover { opacity: 0.8; }
+
+  &.btn-unblock {
+    background: #E6F9F0;
+    color: #1A7A4A;
+  }
+}

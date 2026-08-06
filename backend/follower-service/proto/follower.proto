@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option go_package = "follower-service/proto";
+
+service FollowerService {
+  rpc Follow (FollowRequest) returns (FollowResponse) {}
+  rpc Unfollow (UnfollowRequest) returns (UnfollowResponse) {}
+  rpc GetFollowing (GetFollowingRequest) returns (GetFollowingResponse) {}
+}
+
+message FollowRequest {
+  string followerId = 1;
+  string followedId = 2;
+  string followerUsername = 3;
+  string followedUsername = 4;
+}
+
+message FollowResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message UnfollowRequest {
+  string followerId = 1;
+  string followedId = 2;
+}
+
+message UnfollowResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message GetFollowingRequest {
+  string userId = 1;
+}
+
+message UserProto {
+  string id = 1;
+  string username = 2;
+}
+
+message GetFollowingResponse {
+  repeated UserProto users = 1;
+}

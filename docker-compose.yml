@@ -1,0 +1,378 @@
+version: '3.9'
+services:
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    image: api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      JWT_SECRET: mysupersecretkey123
+      STAKEHOLDERS_SERVICE_URL: http://stakeholders-service:8081
+      BLOG_SERVICE_URL: http://blog-service:8082
+      TOUR_SERVICE_URL: http://tour-service:8083
+      TOUR_SERVICE_GRPC_URL: tour-service:9090
+      FOLLOWER_SERVICE_URL: http://follower-service:8084
+      FOLLOWER_SERVICE_GRPC_URL: follower-service:9084
+      PAYMENT_SERVICE_URL: http://payment-service:8086
+      PAYMENT_SERVICE_GRPC_URL: payment-service:9091
+    depends_on:
+      - stakeholders-service
+      - blog-service
+      - tour-service
+      - follower-service
+      - payment-service
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  stakeholders-service:
+    build:
+      context: ./backend/stakeholders-service
+      dockerfile: Dockerfile
+    image: stakeholders-service:latest
+    container_name: stakeholders-service
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: postgres-stakeholders
+      DB_PORT: 5432
+      DB_NAME: stakeholders
+      DB_USER: postgres
+      DB_PASSWORD: root
+      PORT: 8081
+      JWT_SECRET: mysupersecretkey123
+      BASE_URL: http://localhost:8081
+    depends_on:
+      - postgres-stakeholders
+    networks:
+      - soa-network
+    volumes:
+      - stakeholders-uploads:/app/uploads
+    restart: unless-stopped
+
+  postgres-stakeholders:
+    image: postgres:15-alpine
+    container_name: postgres-stakeholders
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: stakeholders
+    volumes:
+      - stakeholders-db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  blog-service:
+    build:
+      context: ./backend/blog-service
+      dockerfile: Dockerfile
+    image: blog-service:latest
+    container_name: blog-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb-blog:27017/blog_db
+      SERVER_PORT: 8082
+      APP_BASE_URL: http://localhost:8082
+      FOLLOWER_SERVICE_URL: http://follower-service:8084
+    depends_on:
+      - mongodb-blog
+      - follower-service
+    networks:
+      - soa-network
+    volumes:
+      - blog-uploads:/app/uploads
+    restart: unless-stopped
+
+  mongodb-blog:
+    image: mongo:latest
+    container_name: mongodb-blog
+    environment:
+      MONGO_INITDB_DATABASE: blog_db
+    volumes:
+      - blog-db:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  tour-service:
+    build:
+      context: ./backend/tour-service
+      dockerfile: Dockerfile
+    image: tour-service:latest
+    container_name: tour-service
+    ports:
+      - "8083:8083"
+      - "9090:9090"
+    environment:
+      MONGODB_URI: mongodb://mongodb-blog:27017
+      PORT: 8083
+      GRPC_PORT: 9090
+      PAYMENT_SERVICE_URL: http://payment-service:8086
+      PAYMENT_GRPC_ADDR: payment-service:9091
+      NATS_URL: nats://nats:4222
+      OTEL_EXPORTER_OTLP_ENDPOINT: jaeger:4317
+    depends_on:
+      - mongodb-blog
+      - nats
+      - jaeger
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  payment-service:
+    build:
+      context: ./backend/payment-service
+      dockerfile: Dockerfile
+    image: payment-service:latest
+    container_name: payment-service
+    ports:
+      - "8086:8086"
+      - "9091:9091"
+    environment:
+      MONGODB_URI: mongodb://mongodb-payment:27017
+      PORT: 8086
+      GRPC_PORT: 9091
+      TOUR_SERVICE_URL: http://tour-service:8083
+      NATS_URL: nats://nats:4222
+      OTEL_EXPORTER_OTLP_ENDPOINT: jaeger:4317
+    depends_on:
+      - mongodb-payment
+      - nats
+      - jaeger
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  mongodb-payment:
+    image: mongo:latest
+    container_name: mongodb-payment
+    volumes:
+      - payment-db:/data/db
+    ports:
+      - "27018:27017"
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8085:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb-blog:27017/
+    networks:
+      - soa-network
+    depends_on:
+      - mongodb-blog
+
+  mongo-express-payment:
+    image: mongo-express
+    container_name: mongo-express-payment
+    restart: always
+    ports:
+      - "8087:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb-payment:27017/
+    networks:
+      - soa-network
+    depends_on:
+      - mongodb-payment
+
+  nats:
+    image: nats:latest
+    container_name: nats
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: ["--http_port", "8222"]
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  follower-service:
+    build:
+      context: ./backend/follower-service
+      dockerfile: Dockerfile
+    image: follower-service:latest
+    container_name: follower-service
+    ports:
+      - "8084:8084"
+      - "9084:9084"
+    environment:
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: password
+      PORT: 8084
+      GRPC_PORT: 9084
+      OTEL_EXPORTER_OTLP_ENDPOINT: jaeger:4317
+    depends_on:
+      - neo4j
+      - jaeger
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  neo4j:
+    image: neo4j:5
+    container_name: neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/password
+    volumes:
+      - neo4j-db:/data
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+      - "14268:14268"
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8090:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9092:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    networks:
+      - soa-network
+    depends_on:
+      - node-exporter
+      - cadvisor
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    ports:
+      - "9080:9080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./monitoring/promtail-config.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - soa-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    user: root
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+    networks:
+      - soa-network
+    depends_on:
+      - prometheus
+      - loki
+    restart: unless-stopped
+
+volumes:
+  stakeholders-db:
+    name: stakeholders-db
+  blog-db:
+    name: blog-db
+  payment-db:
+    name: payment-db
+  stakeholders-uploads:
+    name: stakeholders-uploads
+  blog-uploads:
+    name: blog-uploads
+  neo4j-db:
+    name: neo4j-db
+  prometheus-data:
+    name: prometheus-data
+  grafana-data:
+    name: grafana-data
+  loki-data:
+    name: loki-data
+
+networks:
+  soa-network:
+    driver: bridge
+    name: soa-network

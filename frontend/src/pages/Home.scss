@@ -1,0 +1,37 @@
+@import '../styles/variables';
+
+.home-page {
+  min-height: 100vh;
+}
+
+.home-hero {
+  width: 100%;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 10% 20%, #C8D8E0 0%, transparent 45%),
+    radial-gradient(ellipse at 55% 35%, #FA9819 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 85%, #C04900 0%, transparent 45%),
+    linear-gradient(135deg, #B5CDD6 0%, #FA9819 55%, #C04900 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 80px 60px;
+
+  h1 {
+    font-family: $font-heading;
+    font-size: 64px;
+    font-weight: 500;
+    color: white;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-family: $font-body;
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 450px;
+    line-height: 1.5;
+  }
+}

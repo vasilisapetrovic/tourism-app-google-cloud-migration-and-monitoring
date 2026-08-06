@@ -1,0 +1,77 @@
+@import '../styles/variables';
+
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.auth-card {
+  width: 400px;
+  padding: 40px;
+  border: 1px solid $color-divider-solid;
+  border-radius: 8px;
+
+  h2 { margin-bottom: 24px; color: $color-text-dark; }
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  font-family: $font-heading;
+  font-weight: 500;
+  font-size: 15px;
+  background: $color-text-dark;
+  color: $color-bg;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover { opacity: 0.85; }
+}
+
+.auth-error {
+  color: $color-accent-red;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.auth-link {
+  margin-top: 20px;
+  font-size: 14px;
+  color: $color-text-secondary;
+  text-align: center;
+
+  a {
+    color: $color-text-dark;
+    font-weight: 600;
+    text-decoration: none;
+  }
+}
+
+.form-group {
+  margin-bottom: 16px;
+
+  label {
+    font-family: $font-heading;
+    font-size: 13px;
+    font-weight: 500;
+    color: $color-text-secondary;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    font-family: $font-body;
+    border: 1px solid $color-divider-solid;
+    border-radius: 4px;
+    outline: none;
+
+    &:focus { border-color: $color-text-dark; }
+  }
+}

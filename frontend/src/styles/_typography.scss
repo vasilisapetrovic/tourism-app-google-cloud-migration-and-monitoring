@@ -1,0 +1,84 @@
+@import 'variables';
+
+h1 {
+  font-family: $font-heading;
+  font-weight: 500;
+  font-size: 45px;
+  line-height: 110%;
+  letter-spacing: -0.01em;
+  color: $color-text-primary;
+}
+
+h2 {
+  font-family: $font-heading;
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 120%;
+  letter-spacing: -0.02em;
+  color: $color-text-primary;
+}
+
+h3 {
+  font-family: $font-heading;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 120%;
+  letter-spacing: -0.01em;
+  color: $color-text-primary;
+}
+
+p {
+  font-family: $font-body;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 120%;
+  color: $color-text-primary;
+}
+
+.text-bold {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.caption {
+  font-family: $font-heading;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: -0.01em;
+  color: $color-text-primary;
+}
+
+.label {
+  font-family: $font-heading;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 120%;
+  letter-spacing: -0.01em;
+  color: $color-text-primary;
+}
+
+.link {
+  font-family: $font-heading;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 120%;
+  letter-spacing: -0.02em;
+  color: $color-text-dark;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-text-secondary;
+  }
+}
+
+.display {
+  font-family: $font-heading;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 120%;
+  letter-spacing: -0.02em;
+  color: $color-text-primary;
+}

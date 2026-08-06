@@ -1,0 +1,179 @@
+@import '../styles/variables';
+
+.users-hero {
+  width: 100%;
+  height: 300px;
+  background:
+    radial-gradient(ellipse at 50% 35%, #C8D8E8 0%, transparent 50%),
+    radial-gradient(ellipse at 10% 85%, #1E3D58 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 80%, #2A5070 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 10%, #4A7A90 0%, transparent 40%),
+    linear-gradient(180deg, #6A9EB0 0%, #1E3D58 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    font-family: $font-heading;
+    font-size: 100px;
+    font-weight: 500;
+    color: white;
+    letter-spacing: -0.03em;
+    text-shadow: 0 2px 40px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.users-page {
+  max-width: 100%;
+  margin: 40px 0;
+  padding: 0 60px;
+  background: $color-bg;
+}
+
+.users-search-box {
+  margin-bottom: 28px;
+}
+
+.users-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 16px;
+  border: 1px solid $color-border;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: $font-body;
+  background: $color-bg;
+  color: $color-text-primary;
+
+  &:focus {
+    outline: none;
+    border-color: $color-accent-orange;
+  }
+}
+
+.users-error {
+  font-size: 13px;
+  color: $color-accent-red;
+  margin-bottom: 16px;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.user-card {
+  border: 1px solid $color-divider-solid;
+  border-radius: 12px;
+  padding: 20px;
+  background: $color-bg;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.user-avatar {
+  display: flex;
+  justify-content: center;
+
+  img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.avatar-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FA9819, #C04900);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  font-family: $font-heading;
+}
+
+.user-info {
+  text-align: center;
+
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: $color-text-dark;
+    margin: 0 0 4px 0;
+  }
+}
+
+.user-name {
+  font-size: 13px;
+  color: $color-text-secondary;
+  margin: 0 0 2px 0;
+}
+
+.user-email {
+  font-size: 12px;
+  color: $color-text-muted;
+  margin: 0;
+}
+
+.btn-follow {
+  width: 100%;
+  padding: 8px;
+  background: $color-text-dark;
+  color: $color-bg;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: $font-heading;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.85; }
+
+  &.btn-following {
+    background: transparent;
+    color: $color-text-secondary;
+    border: 1px solid $color-border;
+
+    &:hover {
+      border-color: $color-accent-red;
+      color: $color-accent-red;
+    }
+  }
+
+  &:disabled { opacity: 0.5; cursor: default; }
+}
+
+.recommendations-section {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid $color-divider-solid;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: $color-text-dark;
+    margin: 0 0 20px 0;
+  }
+}
+
+.no-users {
+  font-size: 14px;
+  color: $color-text-muted;
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 0;
+}

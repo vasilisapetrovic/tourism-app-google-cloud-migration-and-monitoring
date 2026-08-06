@@ -1,0 +1,8 @@
+backend/stakeholders-service/.env
+.env
+*.env
+.vs/
+backend/.idea
+uploads/
+frontend/.vite/
+.idea

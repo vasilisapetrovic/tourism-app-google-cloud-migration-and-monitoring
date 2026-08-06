@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option go_package = "tour-service/proto";
+
+import "google/api/annotations.proto";
+
+service TourService {
+  rpc GetTourById(GetTourByIdRequest) returns (GetTourByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/tours/{id}"
+    };
+  }
+  rpc PublishTour(PublishTourRequest) returns (PublishTourResponse) {
+    option (google.api.http) = {
+      put: "/api/tours/{id}/publish"
+      body: "*"
+    };
+  }
+}
+
+message TransportTime {
+  string transportType = 1;
+  int32  minutes       = 2;
+}
+
+message Tour {
+  string id              = 1;
+  int64  authorId        = 2;
+  string authorUsername  = 3;
+  string name            = 4;
+  string description     = 5;
+  string difficulty      = 6;
+  repeated string tags   = 7;
+  string status          = 8;
+  double price           = 9;
+  double lengthKm        = 10;
+  repeated TransportTime transportTimes = 11;
+  string createdAt       = 12;
+  string publishedAt     = 13;
+  string archivedAt      = 14;
+}
+
+message GetTourByIdRequest {
+  string id     = 1;
+  string role   = 2;
+  int64  userId = 3;
+}
+
+message GetTourByIdResponse {
+  Tour tour = 1;
+}
+
+message PublishTourRequest {
+  string id       = 1;
+  int64  authorId = 2;
+}
+
+message PublishTourResponse {
+  Tour   tour  = 1;
+  string error = 2;
+}

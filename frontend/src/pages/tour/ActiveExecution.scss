@@ -1,0 +1,600 @@
+@import '../../styles/variables';
+
+// Brand gradients
+$grad-1: linear-gradient(135deg, #7EC8C8 0%, #F45F00 100%);       // teal → orange
+$grad-2: linear-gradient(135deg, #FA9819 0%, #7EC8C8 100%);       // orange → teal
+$grad-3: linear-gradient(135deg, #F45F00 0%, #FA9819 60%, #C8602A 100%); // warm orange
+$grad-4: radial-gradient(ellipse at 40% 40%, #4A7A8A 0%, #1A3040 100%);  // dark teal
+
+.exec-page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.exec-map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+// ── Top bar ──────────────────────────────────────────────────────────────────
+
+.exec-topbar {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border-radius: 14px;
+  padding: 10px 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.14);
+  min-width: 320px;
+  max-width: calc(100vw - 32px);
+}
+
+.exec-topbar-back {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: $color-text-secondary;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+
+  &:hover { color: $color-text-dark; }
+}
+
+.exec-topbar-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.exec-topbar-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text-dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exec-topbar-time {
+  font-size: 12px;
+  font-family: $font-heading;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: $grad-3;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.exec-topbar-abandon {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: $font-heading;
+  font-weight: 500;
+  color: $color-text-secondary;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: $color-accent-red;
+    color: $color-accent-red;
+  }
+}
+
+// ── Flash ────────────────────────────────────────────────────────────────────
+
+.exec-flash {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: $grad-3;
+  color: white;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(244, 95, 0, 0.4);
+  white-space: nowrap;
+  animation: flashIn 0.3s ease;
+}
+
+@keyframes flashIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+// ── Bottom panel ─────────────────────────────────────────────────────────────
+
+.exec-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px 32px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.10);
+  max-height: 45vh;
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.1) transparent;
+
+  // Gradient accent strip at top of panel
+  &::before {
+    content: '';
+    display: block;
+    width: 48px;
+    height: 4px;
+    background: $grad-1;
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+}
+
+.exec-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.exec-progress-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-text-dark;
+}
+
+.exec-progress-pct {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: $font-heading;
+  background: $grad-3;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.exec-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.exec-progress-fill {
+  height: 100%;
+  background: $grad-3;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.exec-kp-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.exec-kp-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+
+  &:hover { background: #f8fafc; }
+
+  &.selected {
+    background: #fff7ed;
+    border-color: #fed7aa;
+  }
+
+  &.done {
+    .exec-kp-icon {
+      background: $grad-3;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .exec-kp-name { color: $color-text-secondary; }
+  }
+}
+
+.exec-kp-icon {
+  font-size: 14px;
+  color: #d1d5db;
+  width: 18px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.exec-kp-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: $color-text-dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exec-kp-time {
+  font-size: 11px;
+  color: $color-text-muted;
+  flex-shrink: 0;
+}
+
+.exec-hint {
+  font-size: 11px;
+  color: $color-text-muted;
+  margin: 0;
+  text-align: center;
+}
+
+// ── Keypoint detail card ─────────────────────────────────────────────────────
+
+.exec-kp-detail {
+  position: absolute;
+  bottom: calc(45vh + 12px);
+  left: 16px;
+  right: 16px;
+  z-index: 11;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+  display: flex;
+  animation: slideUp 0.25s ease;
+  max-height: 200px;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.exec-kp-detail-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.06);
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
+  cursor: pointer;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover { background: rgba(0,0,0,0.12); }
+}
+
+.exec-kp-detail-img {
+  width: 120px;
+  min-width: 120px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+// Placeholder when no image — use grad-4
+.exec-kp-detail-img-placeholder {
+  width: 120px;
+  min-width: 120px;
+  background: $grad-4;
+  flex-shrink: 0;
+}
+
+.exec-kp-detail-body {
+  padding: 14px 40px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  justify-content: center;
+}
+
+.exec-kp-detail-status { margin-bottom: 2px; }
+
+.exec-badge-done {
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  background: $grad-3;
+  padding: 2px 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.exec-badge-pending {
+  font-size: 11px;
+  font-weight: 500;
+  color: $color-text-muted;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.exec-kp-detail-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: $color-text-dark;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exec-kp-detail-desc {
+  font-size: 12px;
+  color: $color-text-secondary;
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.exec-kp-detail-coords {
+  font-size: 11px;
+  color: $color-text-muted;
+  margin: 0;
+  font-family: monospace;
+}
+
+// ── Player marker ─────────────────────────────────────────────────────────────
+
+:global(.player-marker) {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:global(.player-pulse) {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(244, 95, 0, 0.2);
+  animation: playerPulse 2s ease-in-out infinite;
+}
+
+:global(.player-dot) {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: $grad-3;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(244, 95, 0, 0.5);
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes playerPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50%       { transform: scale(1.5); opacity: 0.15; }
+}
+
+// ── Loading / complete ────────────────────────────────────────────────────────
+
+.exec-loading {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-family: $font-body;
+  color: $color-text-secondary;
+  background: $grad-4;
+  color: white;
+
+  p { opacity: 0.7; font-size: 14px; }
+}
+
+.exec-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255,255,255,0.2);
+  border-top-color: #FA9819;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.exec-complete-icon { font-size: 48px; }
+
+.exec-error { color: #fca5a5; font-size: 14px; }
+
+.exec-back-btn {
+  background: $grad-3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 13px;
+  font-family: $font-heading;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover { opacity: 0.9; }
+}
+
+h2 {
+  color: white;
+  font-family: $font-heading;
+  margin: 0;
+}
+
+// ── Stats page ────────────────────────────────────────────────────────────────
+
+.exec-stats-page {
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: $font-body;
+}
+
+.exec-stats-header {
+  padding: 48px 32px 40px;
+  text-align: center;
+  color: white;
+}
+
+.exec-stats-title {
+  font-family: $font-heading;
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: white;
+  letter-spacing: -0.03em;
+}
+
+.exec-stats-subtitle {
+  font-size: 15px;
+  margin: 0;
+  opacity: 0.85;
+}
+
+.exec-stats-body {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+.exec-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.exec-stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.exec-stat-value {
+  font-family: $font-heading;
+  font-size: 28px;
+  font-weight: 700;
+  color: $color-text-dark;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #F45F00, #FA9819);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.exec-stat-label {
+  font-size: 12px;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+.exec-stats-kp-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
+}
+
+.exec-stats-kp-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 16px 0;
+}
+
+.exec-stats-kp-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.exec-stats-kp-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+
+  &:last-child { border-bottom: none; }
+}
+
+.exec-stats-kp-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F45F00, #FA9819);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.exec-stats-kp-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text-dark;
+}
+
+.exec-stats-kp-time {
+  font-size: 12px;
+  color: $color-text-muted;
+  font-family: monospace;
+}

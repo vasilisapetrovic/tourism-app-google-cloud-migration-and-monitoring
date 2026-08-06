@@ -1,0 +1,31 @@
+@import 'variables';
+@import 'typography';
+
+@import url('https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700&family=Figtree:wght@400;500&family=Roboto+Mono:wght@400&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-body;
+  color: $color-text-primary;
+  background: $color-bg;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  @extend .link;
+}
+
+input, button, textarea {
+  font-family: $font-body;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
