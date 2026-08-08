@@ -17,6 +17,7 @@ export default function Sidebar() {
     { to: '/profile', label: 'Profile', num: '03' },
     { to: '/users', label: 'Find Users', num: '04' },
     ...(role === 'admin' ? [{ to: '/user-management', label: 'Users', num: '05' }] : []),
+    ...(role === 'admin' ? [{ to: '/monitoring', label: 'Monitoring', num: '06' }] : []),
     ...(role === 'guide' ? [{ to: '/tours', label: 'My Tours', num: '06' }] : []),
     ...(role === 'tourist' ? [{ to: '/tours/explore', label: 'Explore Tours', num: '06' }] : []),
     ...(role === 'tourist' ? [{ to: '/my-purchases', label: 'My Purchases', num: '07' }] : []),

@@ -17,6 +17,7 @@ import Simulator from './pages/tour/Simulator';
 import ActiveExecution from './pages/tour/ActiveExecution';
 import ShoppingCart from './pages/tour/ShoppingCart';
 import MyPurchasedTours from './pages/tour/MyPurchasedTours';
+import Monitoring from './pages/Monitoring';
 
 function ProtectedRoute() {
   const token = localStorage.getItem('token');
@@ -53,6 +54,7 @@ function App() {
           <Route path="/tours/:id/execute" element={<ActiveExecution />} />
           <Route path="/cart" element={<ShoppingCart />} />
           <Route path="/my-purchases" element={<MyPurchasedTours />} />
+          <Route path="/monitoring" element={<Monitoring />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
