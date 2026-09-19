@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"log"
-	"net"
+	"net/http"
 	"os"
+	"strings"
 	"tour-service/database"
 	"tour-service/handlers"
 	"tour-service/proto"
@@ -13,6 +14,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"go.opentelemetry.io/otel"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -28,30 +31,6 @@ func main() {
 	}()
 
 	tracer := otel.Tracer("tour-service")
-
-	// ---- gRPC server ----
-	grpcPort := os.Getenv("GRPC_PORT")
-	if grpcPort == "" {
-		grpcPort = "9090"
-	}
-
-	lis, err := net.Listen("tcp", ":"+grpcPort)
-	if err != nil {
-		log.Fatalf("Failed to listen on gRPC port %s: %v", grpcPort, err)
-	}
-
-	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(otelGrpcUnaryInterceptor(tracer)),
-	)
-	reflection.Register(grpcServer)
-	proto.RegisterTourServiceServer(grpcServer, &TourGrpcServer{})
-
-	go func() {
-		log.Printf("gRPC server listening on :%s", grpcPort)
-		if err := grpcServer.Serve(lis); err != nil {
-			log.Fatalf("gRPC server failed: %v", err)
-		}
-	}()
 
 	go StartNATSSubscriber()
 
@@ -108,11 +87,33 @@ func main() {
 		internal.GET("/check-purchase", handlers.CheckPurchase)
 	}
 
-	httpPort := os.Getenv("PORT")
-	if httpPort == "" {
-		httpPort = "8083"
+	// ---- gRPC server (deli isti port sa HTTP/Gin serverom) ----
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(otelGrpcUnaryInterceptor(tracer)),
+	)
+	reflection.Register(grpcServer)
+	proto.RegisterTourServiceServer(grpcServer, &TourGrpcServer{})
+
+	mixedHandler := func(w http.ResponseWriter, req *http.Request) {
+		if req.ProtoMajor == 2 && strings.HasPrefix(req.Header.Get("Content-Type"), "application/grpc") {
+			grpcServer.ServeHTTP(w, req)
+			return
+		}
+		r.ServeHTTP(w, req)
 	}
 
-	log.Printf("HTTP server listening on :%s", httpPort)
-	r.Run(":" + httpPort)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8083"
+	}
+
+	server := &http.Server{
+		Addr:    ":" + port,
+		Handler: h2c.NewHandler(http.HandlerFunc(mixedHandler), &http2.Server{}),
+	}
+
+	log.Printf("Listening on :%s (HTTP + gRPC on one handler)", port)
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalf("server error: %v", err)
+	}
 }

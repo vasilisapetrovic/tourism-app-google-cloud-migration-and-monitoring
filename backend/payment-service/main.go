@@ -2,36 +2,22 @@ package main
 
 import (
 	"log"
-	"net"
+	"net/http"
 	"os"
 	"payment-service/database"
 	"payment-service/handlers"
 	pb "payment-service/proto"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 )
 
 func main() {
 	database.Connect()
 	initNATS()
-
-	grpcPort := os.Getenv("GRPC_PORT")
-	if grpcPort == "" {
-		grpcPort = "9091"
-	}
-	lis, err := net.Listen("tcp", ":"+grpcPort)
-	if err != nil {
-		log.Fatalf("gRPC listen failed: %v", err)
-	}
-	grpcServer := grpc.NewServer()
-	pb.RegisterPaymentServiceServer(grpcServer, &paymentGrpcServer{})
-	go func() {
-		log.Printf("Payment gRPC server listening on :%s", grpcPort)
-		if err := grpcServer.Serve(lis); err != nil {
-			log.Fatalf("gRPC server failed: %v", err)
-		}
-	}()
 
 	// ---- HTTP server (Gin) ----
 	r := gin.Default()
@@ -57,11 +43,30 @@ func main() {
 
 	r.GET("/api/purchases", handlers.GetPurchases)
 
+	// ---- gRPC server (deli isti port sa HTTP/Gin serverom) ----
+	grpcServer := grpc.NewServer()
+	pb.RegisterPaymentServiceServer(grpcServer, &paymentGrpcServer{})
+
+	mixedHandler := func(w http.ResponseWriter, req *http.Request) {
+		if req.ProtoMajor == 2 && strings.HasPrefix(req.Header.Get("Content-Type"), "application/grpc") {
+			grpcServer.ServeHTTP(w, req)
+			return
+		}
+		r.ServeHTTP(w, req)
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8086"
 	}
 
-	log.Printf("Payment HTTP server listening on :%s", port)
-	r.Run(":" + port)
+	server := &http.Server{
+		Addr:    ":" + port,
+		Handler: h2c.NewHandler(http.HandlerFunc(mixedHandler), &http2.Server{}),
+	}
+
+	log.Printf("Listening on :%s (HTTP + gRPC on one handler)", port)
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalf("server error: %v", err)
+	}
 }
